@@ -27,8 +27,7 @@
     image = cv::imread(r2,cv::IMREAD_GRAYSCALE);
     
 
-    element = cv::getStructuringElement( tipo,
-                       cv::Size( 2*size + 1, 2*size+1 ),
+    element = cv::getStructuringElement( tipo, cv::Size( 2*size + 1, 2*size+1 ),
                        cv::Point( size, size ) );
     if (modo) cv::dilate(image, image,element);
     else cv::erode(image, image,element);

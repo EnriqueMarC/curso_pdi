@@ -3,21 +3,20 @@
 #include <math.h>       /* atan2 */
 
 #define PI 3.14159265
-
+#define MAP_SCALE 0.60
+#define TIM_SCALE 1.0
 ros::Publisher pos_referencia;
 geometry_msgs::Pose2D P_msg, P_;
 double t0;//Se declara la variable t0 como global
-
-const float T[] = {0, 5, 15, 23, 43, 51, 61};//Arreglo de tiempos
-const float X[] = {0, 0,  1,  1, -1, -1,  0};//Arreglo de puntos en X
-const float Y[] = {0, 0,  0,  1,  1,  0,  0};//Arreglo de puntos en Y
-const float M[] = {0, 1,  1,  2,  1,  2,  1};//Modos seleccionados
-const int pT = 7;//Número de puntos
-
+const float T[] = { 0.0*TIM_SCALE,  4.0*TIM_SCALE, 14.0*TIM_SCALE, 22.0*TIM_SCALE, 42.0*TIM_SCALE,  50.0*TIM_SCALE,  60.0*TIM_SCALE};//Arreglo de tiempos
+const float X[] = { 0.0*MAP_SCALE,  0.0*MAP_SCALE,  1.0*MAP_SCALE,  1.0*MAP_SCALE, -1.0*MAP_SCALE,  -1.0*MAP_SCALE,   0.0*MAP_SCALE};//Arreglo de puntos en X
+const float Y[] = {-0.5*MAP_SCALE, -0.5*MAP_SCALE, -0.5*MAP_SCALE,  0.5*MAP_SCALE,  0.5*MAP_SCALE,  -0.5*MAP_SCALE, -0.50*MAP_SCALE};//Arreglo de puntos en Y
+const float M[] = {             0,              1,              1,              2,              1,               2,               1};//Modos seleccionados
+const int pT = 8;//Número de punto};//Arreglo de puntos en X
 
 void timerCallback(const ros::TimerEvent&);//Función que se manda a llamar cada cierto tiempo (indicado en el timer)
 
-geometry_msgs::Pose2D seg_lineal(float ti, float tf, float xi, float xf, float yi, float yf, float t);
+geometry_msgs::Pose2D seg_lineal( float ti, float tf, float xi, float xf, float yi, float yf, float t);
 geometry_msgs::Pose2D seg_med_cir(float ti, float tf, float xi, float xf, float yi, float yf, float t);
 
 int main(int argc, char **argv)
@@ -25,12 +24,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "deslizador");
   ros::NodeHandle n;
   pos_referencia = n.advertise<geometry_msgs::Pose2D>("Pose_ref", 10);
-  
+
   t0 = ros::Time::now().toSec();
   
-  P_.x = 0;//Punto origen en x
-  P_.y = 0;//Punto origen en y
-  P_.theta = 0;//Orientación inicial
+  P_.x = 0.0;//Punto origen en x
+  P_.y = -0.50*MAP_SCALE;//Punto origen en y
+  P_.theta = 0.0;//Orientación inicial
   
   ros::Timer timer = n.createTimer(ros::Duration(0.1),timerCallback);//Pide  la duración, y el nombre de la función que se va a mandar a llamar según el tiempo escogido.
   ros::spin();
@@ -43,7 +42,6 @@ int main(int argc, char **argv)
 void timerCallback(const ros::TimerEvent&){
 
         double t = ros::Time::now().toSec() - t0;
-        
         if(t <= T[pT-1]){
          	int k=1;         
          	while (k < pT){

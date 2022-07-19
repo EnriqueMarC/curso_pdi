@@ -1,1 +1,1 @@
-curso_pdi/aruco[] p_i
+curso_pdi/PoseAruco[] PoseAruco
